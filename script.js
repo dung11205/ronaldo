@@ -115,20 +115,27 @@ if (contactForm) {
             // XỬ LÝ LỖI
             // ============================
 
-            if (error) {
+       
+                if (error) {
+                    console.error("SUPABASE ERROR");
+                    console.error("message:", error.message);
+                    console.error("details:", error.details);
+                    console.error("hint:", error.hint);
+                    console.error("code:", error.code);
+                    console.error("full error:", JSON.stringify(error, null, 2));
 
-                console.error("Supabase Error:", error);
+                    formMessage.textContent =
+                        "Lỗi: " + error.message;
 
-                formMessage.textContent =
-                    "Không thể gửi tin nhắn. Vui lòng thử lại.";
+                    formMessage.style.color = "red";
 
-                formMessage.style.color = "red";
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = "Gửi tin nhắn";
 
-                submitBtn.disabled = false;
-                submitBtn.textContent = "Gửi tin nhắn";
+                    return;
+                }
 
-                return;
-            }
+
 
 
             // ============================
