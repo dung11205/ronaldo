@@ -1,10 +1,15 @@
+
 // ============================
 // SUPABASE
 // ============================
 
+// URL Supabase
 const SUPABASE_URL = "https://ihsixkizhrxysfoizawm.supabase.co";
+
+// Dán Publishable key của project vào đây
 const SUPABASE_KEY = "sb_publishable_ItgnO2KJpSVip-xIC7LCZw_YI4ac9B6";
 
+// Khởi tạo Supabase
 const supabaseClient = supabase.createClient(
     SUPABASE_URL,
     SUPABASE_KEY
@@ -18,13 +23,17 @@ const supabaseClient = supabase.createClient(
 const menuBtn = document.getElementById("menuBtn");
 const navLinks = document.querySelector(".nav-links");
 
-menuBtn.addEventListener("click", () => {
-    navLinks.classList.toggle("active");
-});
+if (menuBtn && navLinks) {
+    menuBtn.addEventListener("click", () => {
+        navLinks.classList.toggle("active");
+    });
+}
 
 document.querySelectorAll(".nav-links a").forEach(link => {
     link.addEventListener("click", () => {
-        navLinks.classList.remove("active");
+        if (navLinks) {
+            navLinks.classList.remove("active");
+        }
     });
 });
 
@@ -36,68 +45,124 @@ document.querySelectorAll(".nav-links a").forEach(link => {
 const contactForm = document.getElementById("contactForm");
 const formMessage = document.getElementById("formMessage");
 
-contactForm.addEventListener("submit", async function(event) {
+if (contactForm) {
 
-    event.preventDefault();
+    contactForm.addEventListener("submit", async function (event) {
 
-    const name = document.getElementById("name").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const message = document.getElementById("message").value.trim();
+        event.preventDefault();
 
-    // Kiểm tra rỗng
-    if (!name || !email || !message) {
-        formMessage.textContent =
-            "Vui lòng nhập đầy đủ thông tin.";
-        return;
-    }
+        // Lấy dữ liệu
+        const name = document.getElementById("name").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const message = document.getElementById("message").value.trim();
 
-    // Kiểm tra email
-    const emailRegex =
-        /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        // ============================
+        // KIỂM TRA DỮ LIỆU
+        // ============================
 
-    if (!emailRegex.test(email)) {
-        formMessage.textContent =
-            "Email không hợp lệ.";
-        return;
-    }
+        if (!name || !email || !message) {
+            formMessage.textContent =
+                "Vui lòng nhập đầy đủ thông tin.";
 
-    // Đổi trạng thái nút
-    const submitBtn =
-        contactForm.querySelector(".submit-btn");
+            formMessage.style.color = "red";
+            return;
+        }
 
-    submitBtn.disabled = true;
-    submitBtn.textContent = "Đang gửi...";
+        // Kiểm tra email
+        const emailRegex =
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    // Gửi dữ liệu lên Supabase
-    const { data, error } = await supabaseClient
-        .from("contacts")
-        .insert([
-            {
-                name: name,
-                email: email,
-                message: message
+        if (!emailRegex.test(email)) {
+            formMessage.textContent =
+                "Email không hợp lệ.";
+
+            formMessage.style.color = "red";
+            return;
+        }
+
+
+        // ============================
+        // BUTTON ĐANG GỬI
+        // ============================
+
+        const submitBtn =
+            contactForm.querySelector(".submit-btn");
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Đang gửi...";
+
+        formMessage.textContent = "";
+
+
+        // ============================
+        // GỬI DỮ LIỆU SUPABASE
+        // ============================
+
+        try {
+
+            const { data, error } = await supabaseClient
+                .from("contacts")
+                .insert([
+                    {
+                        name: name,
+                        email: email,
+                        message: message
+                    }
+                ])
+                .select();
+
+            // ============================
+            // XỬ LÝ LỖI
+            // ============================
+
+            if (error) {
+
+                console.error("Supabase Error:", error);
+
+                formMessage.textContent =
+                    "Không thể gửi tin nhắn. Vui lòng thử lại.";
+
+                formMessage.style.color = "red";
+
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Gửi tin nhắn";
+
+                return;
             }
-        ]);
 
-    if (error) {
 
-        console.error(error);
+            // ============================
+            // THÀNH CÔNG
+            // ============================
 
-        formMessage.textContent =
-            "Có lỗi xảy ra. Vui lòng thử lại.";
+            console.log("Contact đã lưu:", data);
 
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Gửi tin nhắn";
+            formMessage.textContent =
+                "Gửi tin nhắn thành công! Cảm ơn bạn.";
 
-        return;
-    }
+            formMessage.style.color = "green";
 
-    // Thành công
-    formMessage.textContent =
-        "Gửi tin nhắn thành công!";
+            // Xóa form
+            contactForm.reset();
 
-    contactForm.reset();
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Gửi tin nhắn";
 
-    submitBtn.disabled = false;
-    submitBtn.textContent = "Gửi tin nhắn";
-});
+
+        } catch (error) {
+
+            console.error("Lỗi:", error);
+
+            formMessage.textContent =
+                "Có lỗi kết nối. Vui lòng thử lại.";
+
+            formMessage.style.color = "red";
+
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Gửi tin nhắn";
+        }
+
+    });
+
+}
+
