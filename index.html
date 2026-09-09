@@ -1,0 +1,292 @@
+```html
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nguyễn Văn Dũng | Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">Dũng<span>.</span></div>
+
+            <ul class="nav-links">
+                <li><a href="#home">Trang chủ</a></li>
+                <li><a href="#about">Giới thiệu</a></li>
+                <li><a href="#skills">Kỹ năng</a></li>
+                <li><a href="#projects">Dự án</a></li>
+                <li><a href="#contact">Liên hệ</a></li>
+            </ul>
+
+            <button class="menu-btn" id="menuBtn">☰</button>
+        </nav>
+    </header>
+
+    <!-- HOME -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <p class="hello">XIN CHÀO, TÔI LÀ</p>
+
+            <h1>Nguyễn Văn <span>Dũng</span></h1>
+
+            <h2>Software Developer</h2>
+
+            <p class="description">
+                Sinh viên Công nghệ thông tin, yêu thích lập trình,
+                phát triển ứng dụng và xây dựng những sản phẩm hữu ích.
+            </p>
+
+            <div class="hero-buttons">
+                <a href="#projects" class="btn">Xem dự án</a>
+                <a href="#contact" class="btn outline">Liên hệ</a>
+            </div>
+        </div>
+
+        <div class="hero-card">
+            <div class="avatar">
+                D
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="section">
+        <div class="section-title">
+            <p>ABOUT ME</p>
+            <h2>Giới thiệu</h2>
+        </div>
+
+        <div class="about-content">
+            <div>
+                <h3>Tôi là Nguyễn Văn Dũng</h3>
+
+                <p>
+                    Tôi đang học ngành Công nghệ thông tin và định hướng
+                    phát triển theo lĩnh vực Software Developer.
+                </p>
+
+                <p>
+                    Tôi yêu thích việc giải quyết vấn đề bằng code,
+                    xây dựng giao diện và phát triển các ứng dụng thực tế.
+                </p>
+            </div>
+
+            <div class="info-box">
+                <div>
+                    <strong>Học vấn</strong>
+                    <span>Công nghệ thông tin</span>
+                </div>
+
+                <div>
+                    <strong>Định hướng</strong>
+                    <span>Software Developer</span>
+                </div>
+
+                <div>
+                    <strong>Ngôn ngữ</strong>
+                    <span>Vietnamese / English</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills" class="section dark-section">
+        <div class="section-title">
+            <p>MY SKILLS</p>
+            <h2>Kỹ năng</h2>
+        </div>
+
+        <div class="skills-grid">
+            <div class="skill">
+                <h3>HTML / CSS</h3>
+                <div class="progress">
+                    <span style="width: 85%"></span>
+                </div>
+            </div>
+
+            <div class="skill">
+                <h3>JavaScript</h3>
+                <div class="progress">
+                    <span style="width: 75%"></span>
+                </div>
+            </div>
+
+            <div class="skill">
+                <h3>Flutter / Dart</h3>
+                <div class="progress">
+                    <span style="width: 80%"></span>
+                </div>
+            </div>
+
+            <div class="skill">
+                <h3>Node.js</h3>
+                <div class="progress">
+                    <span style="width: 70%"></span>
+                </div>
+            </div>
+
+            <div class="skill">
+                <h3>MongoDB</h3>
+                <div class="progress">
+                    <span style="width: 70%"></span>
+                </div>
+            </div>
+
+            <div class="skill">
+                <h3>Git / GitHub</h3>
+                <div class="progress">
+                    <span style="width: 75%"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects" class="section">
+        <div class="section-title">
+            <p>MY WORK</p>
+            <h2>Dự án</h2>
+        </div>
+
+        <div class="projects-grid">
+
+            <div class="project-card">
+                <div class="project-image">01</div>
+                <div class="project-content">
+                    <h3>Mobile Travel App</h3>
+                    <p>
+                        Ứng dụng du lịch được xây dựng bằng Flutter,
+                        kết nối API Node.js và MongoDB.
+                    </p>
+
+                    <div class="tags">
+                        <span>Flutter</span>
+                        <span>Dart</span>
+                        <span>Node.js</span>
+                    </div>
+
+                    <a href="#" class="project-link">Xem dự án →</a>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-image">02</div>
+                <div class="project-content">
+                    <h3>Portfolio Website</h3>
+                    <p>
+                        Website portfolio cá nhân với thiết kế responsive
+                        và form liên hệ bằng JavaScript.
+                    </p>
+
+                    <div class="tags">
+                        <span>HTML</span>
+                        <span>CSS</span>
+                        <span>JavaScript</span>
+                    </div>
+
+                    <a href="#" class="project-link">Xem dự án →</a>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-image">03</div>
+                <div class="project-content">
+                    <h3>API Backend</h3>
+                    <p>
+                        REST API sử dụng Node.js, Express và MongoDB
+                        phục vụ cho ứng dụng mobile.
+                    </p>
+
+                    <div class="tags">
+                        <span>Node.js</span>
+                        <span>Express</span>
+                        <span>MongoDB</span>
+                    </div>
+
+                    <a href="#" class="project-link">Xem dự án →</a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="section contact-section">
+        <div class="section-title">
+            <p>CONTACT</p>
+            <h2>Liên hệ với tôi</h2>
+        </div>
+
+        <div class="contact-container">
+
+            <div class="contact-info">
+                <h3>Let's talk!</h3>
+
+                <p>
+                    Nếu bạn muốn trao đổi về dự án hoặc công việc,
+                    hãy gửi tin nhắn cho tôi.
+                </p>
+
+                <div class="contact-item">
+                    <strong>Email</strong>
+                    <span>your-email@gmail.com</span>
+                </div>
+
+                <div class="contact-item">
+                    <strong>Phone</strong>
+                    <span>0123 456 789</span>
+                </div>
+
+                <div class="contact-item">
+                    <strong>Location</strong>
+                    <span>Vietnam</span>
+                </div>
+            </div>
+
+            <!-- FORM -->
+            <form id="contactForm" class="contact-form">
+
+                <div class="form-group">
+                    <label>Họ và tên</label>
+                    <input type="text" id="name" placeholder="Nhập họ tên...">
+                </div>
+
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="email" placeholder="example@gmail.com">
+                </div>
+
+                <div class="form-group">
+                    <label>Nội dung</label>
+                    <textarea id="message" rows="6" placeholder="Nhập nội dung..."></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    Gửi tin nhắn
+                </button>
+
+                <p id="formMessage"></p>
+
+            </form>
+
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2026 Nguyễn Văn Dũng. All Rights Reserved.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
+```
