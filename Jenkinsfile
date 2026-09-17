@@ -11,7 +11,7 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'GitHub connection OK!'
-                bat 'dir'
+                sh 'ls -la'
             }
         }
     }
