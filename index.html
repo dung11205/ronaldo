@@ -1,11 +1,11 @@
+```html
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Nguyen Van Dung - Personal Website</title>
-
+    <title>Nguyễn Văn Dũng | Portfolio</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -14,304 +14,279 @@
     <!-- NAVBAR -->
     <header>
         <nav class="navbar">
-            <div class="logo">NGUYEN VAN DUNG</div>
+            <div class="logo">Dũng<span>.</span></div>
 
             <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#skills">Skills</a></li>
-                <li><a href="#projects">Projects</a></li>
-                <li><a href="#contact">Contact</a></li>
+                <li><a href="#home">Trang chủ</a></li>
+                <li><a href="#about">Giới thiệu</a></li>
+                <li><a href="#skills">Kỹ năng</a></li>
+                <li><a href="#projects">Dự án</a></li>
+                <li><a href="#contact">Liên hệ</a></li>
             </ul>
+
+            <button class="menu-btn" id="menuBtn">☰</button>
         </nav>
     </header>
 
-
     <!-- HOME -->
     <section id="home" class="hero">
-
         <div class="hero-content">
+            <p class="hello">XIN CHÀO, TÔI LÀ</p>
 
-            <p class="hello">HELLO, I'M</p>
+            <h1>Nguyễn Văn <span>Dũng</span></h1>
 
-            <h1>Nguyen Van Dung</h1>
-
-            <h2>Computer Engineering Student</h2>
+            <h2>Software Developer</h2>
 
             <p class="description">
-                I'm a Computer Engineering student who loves programming,
-                software development and technology.
+                Sinh viên Công nghệ thông tin, yêu thích lập trình,
+                phát triển ứng dụng và xây dựng những sản phẩm hữu ích.
             </p>
 
-            <div class="buttons">
-                <a href="#about" class="btn primary">About Me</a>
-                <a href="#contact" class="btn secondary">Contact</a>
+            <div class="hero-buttons">
+                <a href="#projects" class="btn">Xem dự án</a>
+                <a href="#contact" class="btn outline">Liên hệ</a>
             </div>
-
         </div>
 
-        <div class="hero-image">
+        <div class="hero-card">
             <div class="avatar">
-                N
+                D
             </div>
         </div>
-
     </section>
-
 
     <!-- ABOUT -->
     <section id="about" class="section">
-
         <div class="section-title">
-            <p>GET TO KNOW ME</p>
-            <h2>About Me</h2>
+            <p>ABOUT ME</p>
+            <h2>Giới thiệu</h2>
         </div>
 
-        <div class="about-container">
-
-            <div class="about-text">
-
-                <h3>I'm a Computer Engineering Student</h3>
+        <div class="about-content">
+            <div>
+                <h3>Tôi là Nguyễn Văn Dũng</h3>
 
                 <p>
-                    I'm currently studying Computer Engineering at Dong A University.
-                    I enjoy learning programming, building applications and
-                    exploring new technologies.
+                    Tôi đang học ngành Công nghệ thông tin và định hướng
+                    phát triển theo lĩnh vực Software Developer.
                 </p>
 
                 <p>
-                    My goal is to become a professional software engineer
-                    and work on interesting technology projects.
+                    Tôi yêu thích việc giải quyết vấn đề bằng code,
+                    xây dựng giao diện và phát triển các ứng dụng thực tế.
                 </p>
-
             </div>
 
-
-            <div class="info-card">
-
-                <div class="info">
-                    <span>Name</span>
-                    <strong>Nguyen Van Dung</strong>
+            <div class="info-box">
+                <div>
+                    <strong>Học vấn</strong>
+                    <span>Công nghệ thông tin</span>
                 </div>
 
-                <div class="info">
-                    <span>Major</span>
-                    <strong>Computer Engineering</strong>
+                <div>
+                    <strong>Định hướng</strong>
+                    <span>Software Developer</span>
                 </div>
 
-                <div class="info">
-                    <span>University</span>
-                    <strong>Dong A University</strong>
+                <div>
+                    <strong>Ngôn ngữ</strong>
+                    <span>Vietnamese / English</span>
                 </div>
-
-                <div class="info">
-                    <span>Location</span>
-                    <strong>Vietnam</strong>
-                </div>
-
             </div>
-
         </div>
-
     </section>
-
 
     <!-- SKILLS -->
-    <section id="skills" class="section skills-section">
-
+    <section id="skills" class="section dark-section">
         <div class="section-title">
-            <p>WHAT I KNOW</p>
-            <h2>My Skills</h2>
+            <p>MY SKILLS</p>
+            <h2>Kỹ năng</h2>
         </div>
 
-        <div class="skills">
-
-            <div class="skill-card">
-                <h3>C / C++</h3>
-                <p>Programming & Algorithms</p>
+        <div class="skills-grid">
+            <div class="skill">
+                <h3>HTML / CSS</h3>
+                <div class="progress">
+                    <span style="width: 85%"></span>
+                </div>
             </div>
 
-            <div class="skill-card">
-                <h3>Python</h3>
-                <p>Programming & Data Processing</p>
-            </div>
-
-            <div class="skill-card">
+            <div class="skill">
                 <h3>JavaScript</h3>
-                <p>Web Development</p>
+                <div class="progress">
+                    <span style="width: 75%"></span>
+                </div>
             </div>
 
-            <div class="skill-card">
-                <h3>Flutter</h3>
-                <p>Mobile Application Development</p>
+            <div class="skill">
+                <h3>Flutter / Dart</h3>
+                <div class="progress">
+                    <span style="width: 80%"></span>
+                </div>
             </div>
 
-            <div class="skill-card">
+            <div class="skill">
                 <h3>Node.js</h3>
-                <p>Backend Development</p>
+                <div class="progress">
+                    <span style="width: 70%"></span>
+                </div>
             </div>
 
-            <div class="skill-card">
+            <div class="skill">
+                <h3>MongoDB</h3>
+                <div class="progress">
+                    <span style="width: 70%"></span>
+                </div>
+            </div>
+
+            <div class="skill">
                 <h3>Git / GitHub</h3>
-                <p>Version Control</p>
+                <div class="progress">
+                    <span style="width: 75%"></span>
+                </div>
             </div>
-
         </div>
-
     </section>
-
 
     <!-- PROJECTS -->
     <section id="projects" class="section">
-
         <div class="section-title">
             <p>MY WORK</p>
-            <h2>Projects</h2>
+            <h2>Dự án</h2>
         </div>
 
-        <div class="projects">
+        <div class="projects-grid">
 
             <div class="project-card">
+                <div class="project-image">01</div>
+                <div class="project-content">
+                    <h3>Mobile Travel App</h3>
+                    <p>
+                        Ứng dụng du lịch được xây dựng bằng Flutter,
+                        kết nối API Node.js và MongoDB.
+                    </p>
 
-                <div class="project-number">01</div>
+                    <div class="tags">
+                        <span>Flutter</span>
+                        <span>Dart</span>
+                        <span>Node.js</span>
+                    </div>
 
-                <h3>Smart Parking</h3>
-
-                <p>
-                    A smart parking system using ESP32,
-                    sensors and IoT technology.
-                </p>
-
-                <span>ESP32 · IoT · Sensors</span>
-
+                    <a href="#" class="project-link">Xem dự án →</a>
+                </div>
             </div>
 
-
             <div class="project-card">
+                <div class="project-image">02</div>
+                <div class="project-content">
+                    <h3>Portfolio Website</h3>
+                    <p>
+                        Website portfolio cá nhân với thiết kế responsive
+                        và form liên hệ bằng JavaScript.
+                    </p>
 
-                <div class="project-number">02</div>
+                    <div class="tags">
+                        <span>HTML</span>
+                        <span>CSS</span>
+                        <span>JavaScript</span>
+                    </div>
 
-                <h3>Task Manager</h3>
-
-                <p>
-                    A task management website with
-                    Node.js and MongoDB.
-                </p>
-
-                <span>Node.js · Express · MongoDB</span>
-
+                    <a href="#" class="project-link">Xem dự án →</a>
+                </div>
             </div>
 
-
             <div class="project-card">
+                <div class="project-image">03</div>
+                <div class="project-content">
+                    <h3>API Backend</h3>
+                    <p>
+                        REST API sử dụng Node.js, Express và MongoDB
+                        phục vụ cho ứng dụng mobile.
+                    </p>
 
-                <div class="project-number">03</div>
+                    <div class="tags">
+                        <span>Node.js</span>
+                        <span>Express</span>
+                        <span>MongoDB</span>
+                    </div>
 
-                <h3>Flutter Application</h3>
-
-                <p>
-                    A mobile application using Flutter
-                    and Firebase.
-                </p>
-
-                <span>Flutter · Firebase</span>
-
+                    <a href="#" class="project-link">Xem dự án →</a>
+                </div>
             </div>
 
         </div>
-
     </section>
-
 
     <!-- CONTACT -->
     <section id="contact" class="section contact-section">
-
         <div class="section-title">
-            <p>GET IN TOUCH</p>
-            <h2>Contact Me</h2>
+            <p>CONTACT</p>
+            <h2>Liên hệ với tôi</h2>
         </div>
 
         <div class="contact-container">
 
             <div class="contact-info">
-
-                <h3>Let's work together.</h3>
+                <h3>Let's talk!</h3>
 
                 <p>
-                    If you want to contact me, feel free to
-                    send me a message.
+                    Nếu bạn muốn trao đổi về dự án hoặc công việc,
+                    hãy gửi tin nhắn cho tôi.
                 </p>
 
-                <p>📧 Email: nguyenvandung11205@gmail.com</p>
-                <p>💻 GitHub: https://github.com/dung11205 </p>
+                <div class="contact-item">
+                    <strong>Email</strong>
+                    <span>your-email@gmail.com</span>
+                </div>
+
+                <div class="contact-item">
+                    <strong>Phone</strong>
+                    <span>0123 456 789</span>
+                </div>
+
+                <div class="contact-item">
+                    <strong>Location</strong>
+                    <span>Vietnam</span>
+                </div>
             </div>
 
+            <!-- FORM -->
+            <form id="contacts" class="contact-form">
 
-            <form id="contactForm">
+                <div class="form-group">
+                    <label>Họ và tên</label>
+                    <input type="text" id="name" placeholder="Nhập họ tên...">
+                </div>
 
-                <input
-                    type="text"
-                    id="name"
-                    placeholder="Your name"
-                    autocomplete="name"
-                    required
-                >
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="email" placeholder="example@gmail.com">
+                </div>
 
-                <input
-                    type="email"
-                    id="email"
-                    placeholder="Your email"
-                    autocomplete="email"
-                    required
-                >
+                <div class="form-group">
+                    <label>Nội dung</label>
+                    <textarea id="message" rows="6" placeholder="Nhập nội dung..."></textarea>
+                </div>
 
-                <textarea
-                    id="message"
-                    placeholder="Your message"
-                    rows="5"
-                    required
-                ></textarea>
-
-                <button type="submit" class="btn primary">
-                    Send Message
+                <button type="submit" class="submit-btn">
+                    Gửi tin nhắn
                 </button>
+
+                <p id="formMessage"></p>
 
             </form>
 
         </div>
-
     </section>
-
 
     <!-- FOOTER -->
     <footer>
-
-        <p>
-            © 2026 Nguyên. All Rights Reserved.
-        </p>
-
+        <p>© 2026 Nguyễn Văn Dũng. All Rights Reserved.</p>
     </footer>
 
-
-    <!-- SUPABASE SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <script>
-        const SUPABASE_URL = "https://ihsixkizhrxysfoizawm.supabase.co";
-        const SUPABASE_ANON_KEY = "sb_publishable_ItgnO2KJpSVip-xIC7LCZw_YI4ac9B6";
-
-        // Tạo instance duy nhất với tên supabaseClient để tránh trùng lặp
-        const supabaseClient = window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_ANON_KEY
-        );
-    </script>
-
-    <!-- JS của dự án -->
     <script src="script.js"></script>
-
 </body>
-<h1>Test Auto Buildsadasdsaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadads Jenkins</h1>
-<h1>Test Autodsadasd</h1>
-<h1>Test</h1>
+
 </html>
+```
