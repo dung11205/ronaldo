@@ -2,19 +2,13 @@ pipeline {
     agent any
 
     stages {
-
-        // =========================
         // 1. LẤY CODE TỪ GITHUB
-        // =========================
         stage('Checkout') {
             steps {
                 checkout scm
             }
         }
-
-        // =========================
         // 2. KIỂM TRA CODE
-        // =========================
         stage('Test') {
             steps {
                 echo 'GitHub connection OK!'
@@ -26,10 +20,7 @@ pipeline {
                 '''
             }
         }
-
-        // =========================
         // 3. KIỂM TRA TELEGRAM
-        // =========================
         stage('Test Telegram') {
             steps {
                 withCredentials([
@@ -70,9 +61,7 @@ pipeline {
         }
     }
 
-    // =========================
-    // 4. GỬI TELEGRAM SAU BUILD
-    // =========================
+    // GỬI TELEGRAM SAU BUILD
     post {
 
         // BUILD THÀNH CÔNG
