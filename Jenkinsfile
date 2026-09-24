@@ -2,12 +2,14 @@ pipeline {
     agent any
 
     stages {
+
         // 1. LẤY CODE TỪ GITHUB
         stage('Checkout') {
             steps {
                 checkout scm
             }
         }
+
         // 2. KIỂM TRA CODE
         stage('Test') {
             steps {
@@ -20,6 +22,7 @@ pipeline {
                 '''
             }
         }
+
         // 3. KIỂM TRA TELEGRAM
         stage('Test Telegram') {
             steps {
@@ -37,7 +40,6 @@ pipeline {
                     sh '''
                         echo "Checking Telegram configuration..."
 
-                        # Không in token ra log
                         TOKEN_LENGTH=$(printf '%s' "$BOT_TOKEN" | wc -c)
                         COLON_COUNT=$(printf '%s' "$BOT_TOKEN" | tr -cd ':' | wc -c)
 
@@ -57,6 +59,29 @@ pipeline {
                         echo "Telegram configuration format OK."
                     '''
                 }
+            }
+        }
+
+        // 4. KIỂM TRA WEBSITE VERCEL
+        stage('Test Vercel Website') {
+            steps {
+                sh '''
+                    echo "Checking Vercel website..."
+
+                    URL="https://ronaldo-zeta.vercel.app/"
+
+                    HTTP_STATUS=$(curl -L -s -o /dev/null -w "%{http_code}" "$URL")
+
+                    echo "Website: $URL"
+                    echo "HTTP Status: $HTTP_STATUS"
+
+                    if [ "$HTTP_STATUS" -ne 200 ]; then
+                        echo "ERROR: Vercel website is not responding correctly."
+                        exit 1
+                    fi
+
+                    echo "Vercel website is running successfully."
+                '''
             }
         }
     }
@@ -84,7 +109,7 @@ pipeline {
                         --request POST \
                         --url "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
                         --data-urlencode "chat_id=${CHAT_ID}" \
-                        --data-urlencode "text=Jenkins SUCCESS - ${JOB_NAME} #${BUILD_NUMBER}"
+                        --data-urlencode "text=Jenkins SUCCESS - ${JOB_NAME} #${BUILD_NUMBER} - Vercel OK"
 
                     echo "Telegram SUCCESS notification sent."
                 '''
