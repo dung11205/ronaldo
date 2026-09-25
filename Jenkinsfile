@@ -7,9 +7,7 @@ pipeline {
 
     stages {
 
-        // =====================================================
         // 1. LẤY CODE TỪ GITHUB
-        // =====================================================
         stage('Checkout') {
             steps {
                 checkout scm
@@ -51,11 +49,7 @@ pipeline {
                 }
             }
         }
-
-
-        // =====================================================
         // 2. GỬI THÔNG BÁO BẮT ĐẦU DEPLOY
-        // =====================================================
         stage('Notify Deploy Start') {
             steps {
                 withCredentials([
@@ -73,9 +67,9 @@ pipeline {
                         echo "Sending deploy start notification..."
 
                         MESSAGE="🚀 Bắt đầu deploy website
-Repository: ${REPOSITORY_NAME}
-Branch: ${BRANCH_NAME_CUSTOM}
-Commit: ${COMMIT_ID}"
+                                Repository: ${REPOSITORY_NAME}
+                                Branch: ${BRANCH_NAME_CUSTOM}
+                                Commit: ${COMMIT_ID}"
 
                         curl -sS --fail \
                             --request POST \
@@ -90,9 +84,7 @@ Commit: ${COMMIT_ID}"
         }
 
 
-        // =====================================================
         // 3. KIỂM TRA CODE
-        // =====================================================
         stage('Test') {
             steps {
                 echo 'GitHub connection OK!'
@@ -106,9 +98,7 @@ Commit: ${COMMIT_ID}"
         }
 
 
-        // =====================================================
         // 4. KIỂM TRA TELEGRAM
-        // =====================================================
         stage('Test Telegram') {
             steps {
                 withCredentials([
@@ -146,11 +136,7 @@ Commit: ${COMMIT_ID}"
                 }
             }
         }
-
-
-        // =====================================================
         // 5. KIỂM TRA WEBSITE VERCEL
-        // =====================================================
         stage('Test Vercel Website') {
             steps {
                 sh '''
@@ -176,16 +162,9 @@ Commit: ${COMMIT_ID}"
             }
         }
     }
-
-
-    // =========================================================
     // 6. THÔNG BÁO KẾT QUẢ
-    // =========================================================
     post {
-
-        // -----------------------------------------------------
         // DEPLOY THÀNH CÔNG
-        // -----------------------------------------------------
         success {
             withCredentials([
                 string(
@@ -201,10 +180,10 @@ Commit: ${COMMIT_ID}"
                 sh '''
                     echo "Sending SUCCESS notification..."
 
-                    MESSAGE="✅ Deploy thành công
-Repository: ${REPOSITORY_NAME}
-Branch: ${BRANCH_NAME_CUSTOM}
-Website: ${VERCEL_URL}"
+                    MESSAGE=" Deploy thành công
+                            Repository: ${REPOSITORY_NAME}
+                            Branch: ${BRANCH_NAME_CUSTOM}
+                            Website: ${VERCEL_URL}"
 
                     curl -sS --fail \
                         --request POST \
@@ -216,11 +195,7 @@ Website: ${VERCEL_URL}"
                 '''
             }
         }
-
-
-        // -----------------------------------------------------
         // DEPLOY THẤT BẠI
-        // -----------------------------------------------------
         failure {
             withCredentials([
                 string(
@@ -234,7 +209,6 @@ Website: ${VERCEL_URL}"
             ]) {
 
                 script {
-
                     // Lấy lỗi cuối cùng từ Jenkins log
                     def errorMessage = sh(
                         script: '''
@@ -257,7 +231,6 @@ Website: ${VERCEL_URL}"
                     if (errorMessage.length() > 500) {
                         errorMessage = errorMessage.take(500)
                     }
-
                     // Tránh ký tự xuống dòng làm hỏng message
                     errorMessage = errorMessage.replaceAll(/[\r\n]+/, ' ')
 
@@ -268,11 +241,11 @@ Website: ${VERCEL_URL}"
                         sh '''
                             echo "Sending FAILURE notification..."
 
-                            MESSAGE="❌ Deploy thất bại
-Repository: ${REPOSITORY_NAME}
-Branch: ${BRANCH_NAME_CUSTOM}
-Commit: ${COMMIT_ID}
-Error: ${ERROR_MESSAGE}"
+                            MESSAGE=" Deploy thất bại
+                                    Repository: ${REPOSITORY_NAME}
+                                    Branch: ${BRANCH_NAME_CUSTOM}
+                                    Commit: ${COMMIT_ID}
+                                    Error: ${ERROR_MESSAGE}"
 
                             curl -sS --fail \
                                 --request POST \
