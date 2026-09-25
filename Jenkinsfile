@@ -29,7 +29,7 @@ pipeline {
                     ).trim()
 
                     env.COMMIT_MESSAGE = sh(
-                        script: 'git log -1 --pretty=%s',
+                        script: 'git log -1 --pretty=%B',
                         returnStdout: true
                     ).trim()
 
