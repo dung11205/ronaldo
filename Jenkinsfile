@@ -7,33 +7,22 @@ pipeline {
 
     stages {
 
+        // =====================================================
         // 1. LẤY CODE TỪ GITHUB
+        // =====================================================
         stage('Checkout') {
             steps {
                 checkout scm
 
                 script {
+
+                    // Lấy URL repository
                     env.REPOSITORY = sh(
                         script: 'git config --get remote.origin.url',
                         returnStdout: true
                     ).trim()
 
-                    env.BRANCH_NAME_CUSTOM = sh(
-                        script: 'git rev-parse --abbrev-ref HEAD',
-                        returnStdout: true
-                    ).trim()
-
-                    env.COMMIT_ID = sh(
-                        script: 'git rev-parse --short HEAD',
-                        returnStdout: true
-                    ).trim()
-
-                    env.COMMIT_MESSAGE = sh(
-                        script: 'git log -1 --pretty=%B',
-                        returnStdout: true
-                    ).trim()
-
-                    // Lấy tên repository từ URL GitHub
+                    // Lấy tên repository
                     env.REPOSITORY_NAME = sh(
                         script: '''
                             git config --get remote.origin.url |
@@ -43,15 +32,57 @@ pipeline {
                         returnStdout: true
                     ).trim()
 
-                    echo "Repository: ${env.REPOSITORY_NAME}"
-                    echo "Branch: ${env.BRANCH_NAME_CUSTOM}"
-                    echo "Commit: ${env.COMMIT_ID}"
+                    // Lấy branch
+                    env.BRANCH_NAME_CUSTOM = sh(
+                        script: 'git rev-parse --abbrev-ref HEAD',
+                        returnStdout: true
+                    ).trim()
+
+                    // Lấy commit ID
+                    env.COMMIT_ID = sh(
+                        script: 'git rev-parse --short HEAD',
+                        returnStdout: true
+                    ).trim()
+
+                    // Lấy TOÀN BỘ nội dung commit
+                    env.COMMIT_MESSAGE = sh(
+                        script: 'git log -1 --pretty=%B',
+                        returnStdout: true
+                    ).trim()
+
+                    // Lấy người commit
+                    env.COMMIT_AUTHOR = sh(
+                        script: 'git log -1 --pretty=%an',
+                        returnStdout: true
+                    ).trim()
+
+                    // Lấy thời gian commit
+                    env.COMMIT_DATE = sh(
+                        script: 'git log -1 --pretty=%ad --date=format:"%d/%m/%Y %H:%M"',
+                        returnStdout: true
+                    ).trim()
+
+                    echo '========================================'
+                    echo '        GITHUB INFORMATION'
+                    echo '========================================'
+                    echo "Repository : ${env.REPOSITORY_NAME}"
+                    echo "Branch     : ${env.BRANCH_NAME_CUSTOM}"
+                    echo "Commit     : ${env.COMMIT_ID}"
+                    echo "Author     : ${env.COMMIT_AUTHOR}"
+                    echo "Date       : ${env.COMMIT_DATE}"
+                    echo "Message    : ${env.COMMIT_MESSAGE}"
+                    echo '========================================'
                 }
             }
         }
-        // 2. GỬI THÔNG BÁO BẮT ĐẦU DEPLOY
+
+
+        // =====================================================
+        // 2. THÔNG BÁO BẮT ĐẦU DEPLOY
+        // =====================================================
         stage('Notify Deploy Start') {
             steps {
+
                 withCredentials([
                     string(
                         credentialsId: 'telegram-bot-token',
@@ -67,9 +98,13 @@ pipeline {
                         echo "Sending deploy start notification..."
 
                         MESSAGE="🚀 Bắt đầu deploy website
-                                Repository: ${REPOSITORY_NAME}
-                                Branch: ${BRANCH_NAME_CUSTOM}
-                                Commit: ${COMMIT_ID}"
+Repository: ${REPOSITORY_NAME}
+Branch: ${BRANCH_NAME_CUSTOM}
+Commit: ${COMMIT_ID}
+Author: ${COMMIT_AUTHOR}
+Thời gian: ${COMMIT_DATE}
+Nội dung commit:
+${COMMIT_MESSAGE}"
 
                         curl -sS --fail \
                             --request POST \
@@ -84,23 +119,33 @@ pipeline {
         }
 
 
+        // =====================================================
         // 3. KIỂM TRA CODE
+        // =====================================================
         stage('Test') {
             steps {
+
                 echo 'GitHub connection OK!'
 
                 sh '''
-                    echo "===== PROJECT FILES ====="
+                    echo "========================================"
+                    echo "       PROJECT FILES"
+                    echo "========================================"
+
                     ls -la
-                    echo "========================="
+
+                    echo "========================================"
                 '''
             }
         }
 
 
+        // =====================================================
         // 4. KIỂM TRA TELEGRAM
+        // =====================================================
         stage('Test Telegram') {
             steps {
+
                 withCredentials([
                     string(
                         credentialsId: 'telegram-bot-token',
@@ -116,7 +161,10 @@ pipeline {
                         echo "Checking Telegram configuration..."
 
                         TOKEN_LENGTH=$(printf '%s' "$BOT_TOKEN" | wc -c)
-                        COLON_COUNT=$(printf '%s' "$BOT_TOKEN" | tr -cd ':' | wc -c)
+
+                        COLON_COUNT=$(printf '%s' "$BOT_TOKEN" |
+                            tr -cd ':' |
+                            wc -c)
 
                         echo "Token length: $TOKEN_LENGTH"
                         echo "Colon count: $COLON_COUNT"
@@ -136,11 +184,20 @@ pipeline {
                 }
             }
         }
+
+
+        // =====================================================
         // 5. KIỂM TRA WEBSITE VERCEL
+        // =====================================================
         stage('Test Vercel Website') {
             steps {
+
                 sh '''
-                    echo "Checking Vercel website..."
+                    echo "========================================"
+                    echo "       CHECKING VERCEL WEBSITE"
+                    echo "========================================"
+
+                    echo "Website: $VERCEL_URL"
 
                     HTTP_STATUS=$(curl \
                         -L \
@@ -149,23 +206,35 @@ pipeline {
                         -w "%{http_code}" \
                         "$VERCEL_URL")
 
-                    echo "Website: $VERCEL_URL"
                     echo "HTTP Status: $HTTP_STATUS"
 
                     if [ "$HTTP_STATUS" -ne 200 ]; then
+
                         echo "ERROR: Website returned HTTP $HTTP_STATUS"
+
                         exit 1
                     fi
 
                     echo "Vercel website is running successfully."
+
+                    echo "========================================"
                 '''
             }
         }
     }
-    // 6. THÔNG BÁO KẾT QUẢ
+
+
+    // =========================================================
+    // 6. KẾT QUẢ BUILD / DEPLOY
+    // =========================================================
+
     post {
+
+        // =====================================================
         // DEPLOY THÀNH CÔNG
+        // =====================================================
         success {
+
             withCredentials([
                 string(
                     credentialsId: 'telegram-bot-token',
@@ -180,10 +249,14 @@ pipeline {
                 sh '''
                     echo "Sending SUCCESS notification..."
 
-                    MESSAGE=" Deploy thành công
-                            Repository: ${REPOSITORY_NAME}
-                            Branch: ${BRANCH_NAME_CUSTOM}
-                            Website: ${VERCEL_URL}"
+                    MESSAGE="✅ Deploy thành công
+Repository: ${REPOSITORY_NAME}
+Branch: ${BRANCH_NAME_CUSTOM}
+Commit: ${COMMIT_ID}
+Author: ${COMMIT_AUTHOR}
+Nội dung commit:
+${COMMIT_MESSAGE}
+Website: ${VERCEL_URL}"
 
                     curl -sS --fail \
                         --request POST \
@@ -195,8 +268,13 @@ pipeline {
                 '''
             }
         }
+
+
+        // =====================================================
         // DEPLOY THẤT BẠI
+        // =====================================================
         failure {
+
             withCredentials([
                 string(
                     credentialsId: 'telegram-bot-token',
@@ -209,17 +287,19 @@ pipeline {
             ]) {
 
                 script {
-                    // Lấy lỗi cuối cùng từ Jenkins log
+
+                    echo "Build failed. Preparing error information..."
+
                     def errorMessage = sh(
                         script: '''
                             set +e
 
-                            ERROR=$(tail -n 30 "${WORKSPACE}@tmp/durable-"*/output.txt 2>/dev/null |
+                            ERROR=$(tail -n 100 "${WORKSPACE}@tmp/durable-"*/output.txt 2>/dev/null |
                                 grep -E "ERROR|error|Error|FAILED|failed" |
                                 tail -n 1)
 
                             if [ -z "$ERROR" ]; then
-                                ERROR="Jenkins build failed. Check console log."
+                                ERROR="Jenkins build failed. Check Console Output."
                             fi
 
                             echo "$ERROR"
@@ -227,13 +307,24 @@ pipeline {
                         returnStdout: true
                     ).trim()
 
-                    // Giới hạn độ dài lỗi
+
+                    // Nếu không lấy được lỗi
+                    if (!errorMessage) {
+                        errorMessage = "Jenkins build failed. Check Console Output."
+                    }
+
+
+                    // Giới hạn lỗi tối đa 500 ký tự
                     if (errorMessage.length() > 500) {
                         errorMessage = errorMessage.take(500)
                     }
-                    // Tránh ký tự xuống dòng làm hỏng message
+
+
+                    // Xóa xuống dòng
                     errorMessage = errorMessage.replaceAll(/[\r\n]+/, ' ')
 
+
+                    // Đưa lỗi vào environment
                     withEnv([
                         "ERROR_MESSAGE=${errorMessage}"
                     ]) {
@@ -241,11 +332,14 @@ pipeline {
                         sh '''
                             echo "Sending FAILURE notification..."
 
-                            MESSAGE=" Deploy thất bại
-                                    Repository: ${REPOSITORY_NAME}
-                                    Branch: ${BRANCH_NAME_CUSTOM}
-                                    Commit: ${COMMIT_ID}
-                                    Error: ${ERROR_MESSAGE}"
+                            MESSAGE="❌ Deploy thất bại
+Repository: ${REPOSITORY_NAME}
+Branch: ${BRANCH_NAME_CUSTOM}
+Commit: ${COMMIT_ID}
+Author: ${COMMIT_AUTHOR}
+Nội dung commit:
+${COMMIT_MESSAGE}
+Error: ${ERROR_MESSAGE}"
 
                             curl -sS --fail \
                                 --request POST \
