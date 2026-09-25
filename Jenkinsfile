@@ -1,29 +1,114 @@
 pipeline {
     agent any
 
+    environment {
+        VERCEL_URL = 'https://ronaldo-zeta.vercel.app/'
+    }
+
     stages {
 
+        // =====================================================
         // 1. LẤY CODE TỪ GITHUB
+        // =====================================================
         stage('Checkout') {
             steps {
                 checkout scm
+
+                script {
+                    env.REPOSITORY = sh(
+                        script: 'git config --get remote.origin.url',
+                        returnStdout: true
+                    ).trim()
+
+                    env.BRANCH_NAME_CUSTOM = sh(
+                        script: 'git rev-parse --abbrev-ref HEAD',
+                        returnStdout: true
+                    ).trim()
+
+                    env.COMMIT_ID = sh(
+                        script: 'git rev-parse --short HEAD',
+                        returnStdout: true
+                    ).trim()
+
+                    env.COMMIT_MESSAGE = sh(
+                        script: 'git log -1 --pretty=%s',
+                        returnStdout: true
+                    ).trim()
+
+                    // Lấy tên repository từ URL GitHub
+                    env.REPOSITORY_NAME = sh(
+                        script: '''
+                            git config --get remote.origin.url |
+                            sed 's/.*\\///' |
+                            sed 's/\\.git$//'
+                        ''',
+                        returnStdout: true
+                    ).trim()
+
+                    echo "Repository: ${env.REPOSITORY_NAME}"
+                    echo "Branch: ${env.BRANCH_NAME_CUSTOM}"
+                    echo "Commit: ${env.COMMIT_ID}"
+                }
             }
         }
 
-        // 2. KIỂM TRA CODE
+
+        // =====================================================
+        // 2. GỬI THÔNG BÁO BẮT ĐẦU DEPLOY
+        // =====================================================
+        stage('Notify Deploy Start') {
+            steps {
+                withCredentials([
+                    string(
+                        credentialsId: 'telegram-bot-token',
+                        variable: 'BOT_TOKEN'
+                    ),
+                    string(
+                        credentialsId: 'telegram-chat-id',
+                        variable: 'CHAT_ID'
+                    )
+                ]) {
+
+                    sh '''
+                        echo "Sending deploy start notification..."
+
+                        MESSAGE="🚀 Bắt đầu deploy website
+Repository: ${REPOSITORY_NAME}
+Branch: ${BRANCH_NAME_CUSTOM}
+Commit: ${COMMIT_ID}"
+
+                        curl -sS --fail \
+                            --request POST \
+                            --url "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
+                            --data-urlencode "chat_id=${CHAT_ID}" \
+                            --data-urlencode "text=${MESSAGE}"
+
+                        echo "Deploy start notification sent."
+                    '''
+                }
+            }
+        }
+
+
+        // =====================================================
+        // 3. KIỂM TRA CODE
+        // =====================================================
         stage('Test') {
             steps {
                 echo 'GitHub connection OK!'
 
                 sh '''
-                    echo "===== FILES IN PROJECT ====="
+                    echo "===== PROJECT FILES ====="
                     ls -la
-                    echo "============================"
+                    echo "========================="
                 '''
             }
         }
 
-        // 3. KIỂM TRA TELEGRAM
+
+        // =====================================================
+        // 4. KIỂM TRA TELEGRAM
+        // =====================================================
         stage('Test Telegram') {
             steps {
                 withCredentials([
@@ -62,21 +147,27 @@ pipeline {
             }
         }
 
-        // 4. KIỂM TRA WEBSITE VERCEL
+
+        // =====================================================
+        // 5. KIỂM TRA WEBSITE VERCEL
+        // =====================================================
         stage('Test Vercel Website') {
             steps {
                 sh '''
                     echo "Checking Vercel website..."
 
-                    URL="https://ronaldo-zeta.vercel.app/"
+                    HTTP_STATUS=$(curl \
+                        -L \
+                        -s \
+                        -o /dev/null \
+                        -w "%{http_code}" \
+                        "$VERCEL_URL")
 
-                    HTTP_STATUS=$(curl -L -s -o /dev/null -w "%{http_code}" "$URL")
-
-                    echo "Website: $URL"
+                    echo "Website: $VERCEL_URL"
                     echo "HTTP Status: $HTTP_STATUS"
 
                     if [ "$HTTP_STATUS" -ne 200 ]; then
-                        echo "ERROR: Vercel website is not responding correctly."
+                        echo "ERROR: Website returned HTTP $HTTP_STATUS"
                         exit 1
                     fi
 
@@ -86,10 +177,15 @@ pipeline {
         }
     }
 
-    // GỬI TELEGRAM SAU BUILD
+
+    // =========================================================
+    // 6. THÔNG BÁO KẾT QUẢ
+    // =========================================================
     post {
 
-        // BUILD THÀNH CÔNG
+        // -----------------------------------------------------
+        // DEPLOY THÀNH CÔNG
+        // -----------------------------------------------------
         success {
             withCredentials([
                 string(
@@ -103,20 +199,28 @@ pipeline {
             ]) {
 
                 sh '''
-                    echo "Sending SUCCESS notification to Telegram..."
+                    echo "Sending SUCCESS notification..."
+
+                    MESSAGE="✅ Deploy thành công
+Repository: ${REPOSITORY_NAME}
+Branch: ${BRANCH_NAME_CUSTOM}
+Website: ${VERCEL_URL}"
 
                     curl -sS --fail \
                         --request POST \
                         --url "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
                         --data-urlencode "chat_id=${CHAT_ID}" \
-                        --data-urlencode "text=Jenkins SUCCESS - ${JOB_NAME} #${BUILD_NUMBER} - Vercel OK"
+                        --data-urlencode "text=${MESSAGE}"
 
-                    echo "Telegram SUCCESS notification sent."
+                    echo "SUCCESS notification sent."
                 '''
             }
         }
 
-        // BUILD THẤT BẠI
+
+        // -----------------------------------------------------
+        // DEPLOY THẤT BẠI
+        // -----------------------------------------------------
         failure {
             withCredentials([
                 string(
@@ -129,17 +233,57 @@ pipeline {
                 )
             ]) {
 
-                sh '''
-                    echo "Sending FAILURE notification to Telegram..."
+                script {
 
-                    curl -sS --fail \
-                        --request POST \
-                        --url "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
-                        --data-urlencode "chat_id=${CHAT_ID}" \
-                        --data-urlencode "text=Jenkins FAILED - ${JOB_NAME} #${BUILD_NUMBER}"
+                    // Lấy lỗi cuối cùng từ Jenkins log
+                    def errorMessage = sh(
+                        script: '''
+                            set +e
 
-                    echo "Telegram FAILURE notification sent."
-                '''
+                            ERROR=$(tail -n 30 "${WORKSPACE}@tmp/durable-"*/output.txt 2>/dev/null |
+                                grep -E "ERROR|error|Error|FAILED|failed" |
+                                tail -n 1)
+
+                            if [ -z "$ERROR" ]; then
+                                ERROR="Jenkins build failed. Check console log."
+                            fi
+
+                            echo "$ERROR"
+                        ''',
+                        returnStdout: true
+                    ).trim()
+
+                    // Giới hạn độ dài lỗi
+                    if (errorMessage.length() > 500) {
+                        errorMessage = errorMessage.take(500)
+                    }
+
+                    // Tránh ký tự xuống dòng làm hỏng message
+                    errorMessage = errorMessage.replaceAll(/[\r\n]+/, ' ')
+
+                    withEnv([
+                        "ERROR_MESSAGE=${errorMessage}"
+                    ]) {
+
+                        sh '''
+                            echo "Sending FAILURE notification..."
+
+                            MESSAGE="❌ Deploy thất bại
+Repository: ${REPOSITORY_NAME}
+Branch: ${BRANCH_NAME_CUSTOM}
+Commit: ${COMMIT_ID}
+Error: ${ERROR_MESSAGE}"
+
+                            curl -sS --fail \
+                                --request POST \
+                                --url "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
+                                --data-urlencode "chat_id=${CHAT_ID}" \
+                                --data-urlencode "text=${MESSAGE}"
+
+                            echo "FAILURE notification sent."
+                        '''
+                    }
+                }
             }
         }
     }
